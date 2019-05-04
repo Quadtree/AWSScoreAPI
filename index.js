@@ -1,13 +1,17 @@
 exports.handler = async (event) => {
     return new Promise((resolve, reject) => {
-
-        console.log(event.body);
-
         params = {};
 
         for (let seg of event.body.split('&')){
           let parts = seg.split('=');
           params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+        }
+
+        for (let field of ['Level', 'Score', 'Game']){
+          if (!params[field]){
+            resolve({statusCode: 400, body: JSON.stringify({Error: `Field '${field}' is required`})});
+            return;
+          }
         }
 
         // Load the AWS SDK for Node.js
