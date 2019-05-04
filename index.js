@@ -33,13 +33,13 @@ exports.handler = async (event) => {
         item['Level'] = {S: `${params['Level']}`};
         item['Id'] = {N: id.toString()};
         item['Score'] = {N: params['Score']};
+        item['Ip'] = {S: event.requestContext.identity.sourceIp};
+        item['Timestamp'] = {S: new Date().toUTCString()};
 
         var params = {
           TableName: 'Scores',
           Item: item
         };
-
-
 
         const response = {
             statusCode: 200,
@@ -61,20 +61,21 @@ exports.handler = async (event) => {
               ScanIndexForward: false,
               IndexName: "GameLevel-Score-index",
               TableName: "Scores",
-              Limit: 3,
+              Limit: 10,
             };
             ddb.query(params, function(err, data) {
               if (err){
                 reject(err);
               } else {
-                console.log(data);
-
                 let responseJson = [];
 
                 for (let row of data.Items){
                   let responseRow = {};
+                  responseRow['IsYou'] = row['Id']['N'] == id;
                   for (let k in row){
-                    responseRow[k] = row[k].S ? row[k].S : row[k].N;
+                    if (k != 'Id' || k != 'Ip' || k != 'Timestamp'){
+                        responseRow[k] = row[k].S ? row[k].S : row[k].N;
+                    }
                   }
                   responseJson.push(responseRow);
                 }
