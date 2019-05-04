@@ -80,7 +80,7 @@ exports.handler = async (event) => {
                   responseRow['IsYou'] = row['Id']['N'] == id;
                   for (let k in row){
                     if (k != 'Id' && k != 'Ip' && k != 'Timestamp'){
-                        responseRow[k] = row[k].S ? row[k].S : row[k].N;
+                      responseRow[k] = row[k].S ? row[k].S : row[k].N;
                     }
                   }
                   responseJson.push(responseRow);
