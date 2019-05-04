@@ -2,9 +2,11 @@ exports.handler = async (event) => {
     return new Promise((resolve, reject) => {
         params = {};
 
+        const cleanerRegex = /[^ A-Za-z0-9_-]/;
+
         for (let seg of event.body.split('&')){
           let parts = seg.split('=');
-          params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+          params[decodeURIComponent(parts[0]).replace(cleanerRegex, '')] = decodeURIComponent(parts[1]).replace(cleanerRegex, '');
         }
 
         for (let field of ['Level', 'Score', 'Game']){
@@ -77,7 +79,7 @@ exports.handler = async (event) => {
                   let responseRow = {};
                   responseRow['IsYou'] = row['Id']['N'] == id;
                   for (let k in row){
-                    if (k != 'Id' || k != 'Ip' || k != 'Timestamp'){
+                    if (k != 'Id' && k != 'Ip' && k != 'Timestamp'){
                         responseRow[k] = row[k].S ? row[k].S : row[k].N;
                     }
                   }
