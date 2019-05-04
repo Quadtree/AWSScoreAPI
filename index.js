@@ -23,7 +23,7 @@ exports.handler = async (event) => {
         var item = {};
 
         for (let k in params){
-          if (k != 'game' && k != 'score' && k != 'level'){
+          if (k != 'Game' && k != 'Score' && k != 'Level'){
             item[k] = {S: params[k]};
           }
         }
